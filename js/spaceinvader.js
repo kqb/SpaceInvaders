@@ -1,5 +1,12 @@
 // JavaScript Document
- function images() {
+var stage;
+var baddiesArray = [];
+var ship;
+var img = new images();
+var back = new Image();
+back.src = "img/bg.gif"
+
+function images() {
 	 this.bg = new Image();
 	 this.ship = new Image();
 	 this.projectile1 = new Image();
@@ -11,26 +18,39 @@
   function imageLoaded() {
     numLoaded++;
     if (numLoaded === numImages) {
-      window.init();
+      window.load();
     }
   }
-  this.background.onload = function() {
+  this.bg.onload = function() {
     imageLoaded();
   }
-  this.spaceship.onload = function() {
+  this.ship.onload = function() {
     imageLoaded();
   }
-  this.bullet.onload = function() {
+  this.projectile1.onload = function() {
+    imageLoaded();
+  }
+  this.alien.onload = function() {
     imageLoaded();
   }
      
-	 this.bg.src = "img/bg.gif"
+	 this.bg.src = "img/spacebg.gif"
 	 this.ship.src = "img/nyan.gif"
 	 this.projectile1.src =  "img/thumbnail.png"
   	 this.alien.src =  "img/Kappa.gif"
 	  
  }
  
+//function animate(target, time) {
+//  window.setTimeout(animate,time);	
+//  // Go through all the shapes.
+////  for(var i=0; i<shapes.length; i++) {
+////    var shape = shapes[i];
+////   shape.animate();
+////  }
+//
+//  target.animate();
+//}
  /**
  * Creates the Drawable object which will be the base class for
  * all drawable objects in the game. Sets up default variables
@@ -43,7 +63,6 @@ function Drawable() {
     this.x = x;
     this.y = y;
   }
- 
   this.speed = 0;
   this.canvasWidth = 0;
   this.canvasHeight = 0;
@@ -59,24 +78,36 @@ function Drawable() {
  * canvas and creates the illusion of moving by panning the image.
  */
 function Background() {
-  this.speed = 1; // Redefine speed of the background for panning
+  this.speed = 5; // Redefine speed of the background for panning
  
   // Implement abstract function
   this.draw = function() {
     // Pan background
-    this.y += this.speed;
-    this.context.drawImage(imageRepository.background, this.x, this.y);
+	 this.y += this.speed;
+
+    this.context.drawImage(img.bg, this.x, this.y);
  
     // Draw another image at the top edge of the first image
-    this.context.drawImage(imageRepository.background, this.x, this.y - this.canvasHeight);
+    this.context.drawImage(img.bg, this.x, this.y - this.canvasHeight);
+	this.context.drawImage(img.bg, this.x, this.y - this.canvasHeight-this.canvasHeight);
  
     // If the image scrolled off the screen, reset
     if (this.y >= this.canvasHeight)
       this.y = 0;
+	
   };
 }
 // Set Background to inherit properties from Drawable
 Background.prototype = new Drawable();
+/**
+ * Create alien ships
+ */
+function Alien() {
+	this.speed = 1
+	this.draw = function() {
+		this.context.drawImage(img.alien, this.x, this.y);
+	}
+}
 
 
 /**
@@ -94,29 +125,28 @@ function Game() {
   this.init = function() {
     // Get the canvas element
     this.bgCanvas = document.getElementById('bg');
- 
-    // Test to see if canvas is supported
-    if (this.bgCanvas.getContext) {
-      this.bgContext = this.bgCanvas.getContext('2d');
- 
-      // Initialize objects to contain their context and canvas
-      // information
-      Background.prototype.context = this.bgContext;
-      Background.prototype.canvasWidth = this.bgCanvas.width;
-      Background.prototype.canvasHeight = this.bgCanvas.height;
- 
-      // Initialize the background object
-      this.background = new Background();
-      this.background.init(0,0); // Set draw point to 0,0
-      return true;
-    } else {
-      return false;
+
+	this.bgContext = this.bgCanvas.getContext('2d');
+	
+	// Initialize objects to contain their context and canvas
+	// information
+	Background.prototype.context = this.bgContext;
+	Background.prototype.canvasWidth = this.bgCanvas.width;
+	Background.prototype.canvasHeight = this.bgCanvas.height;
+	
+	// Initialize the background object
+	this.background = new Background();
+	this.background.init(0,0); // Set draw point to 0,0
+	this.background.draw();
+	  // Start the animation loop
+  	this.start = function() {
+    animate();
+  	};
+	return true;
     }
   };
   
-  
-  
-  /**
+ /**
  * The animation loop. Calls the requestAnimationFrame shim to
  * optimize the game loop and draws all game objects. This
  * function must be a gobal function and cannot be within an
@@ -139,24 +169,16 @@ window.requestAnimFrame = (function(){
       window.oRequestAnimationFrame      ||
       window.msRequestAnimationFrame     ||
       function(/* function */ callback, /* DOMElement */ element){
-        window.setTimeout(callback, 1000 / 60);
+        window.setTimeout(callback, 1000/60 );
       };
 })();
- 
-  // Start the animation loop
-  this.start = function() {
-    animate();
-  };
-}
-
-
 
 /**
  * Initialize the Game and starts it.
  */
 var game = new Game();
  
-function init() {
+function load() {
   if(game.init())
     game.start();
 }
