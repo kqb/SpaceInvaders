@@ -121,11 +121,13 @@ function Game(new_canvas) {
 
 	// Run game setup.
 	setup();
+	currentState = STATE_START;
 	
 
 	/****************************
 			Game Setup
 	****************************/
+
 	function setup() {
 		// Reset game variables
 		invader_leftLimit = 0;
@@ -194,6 +196,7 @@ function Game(new_canvas) {
 				setup();
 				difficulty = difficulty + 0.25;
 				currentState = STATE_GAME;
+				playerShoot = false;
 			}
 		} else if (currentState == STATE_DEFEAT) {
 			// Player pressing "space to continue."
@@ -202,6 +205,13 @@ function Game(new_canvas) {
 				score = 0;
 				difficulty = 1;
 				currentState = STATE_GAME;
+				playerShoot = false;
+			}
+		} else if (currentState == STATE_START) {
+			// Player pressing "space to start."
+			if (playerShoot) {
+				currentState = STATE_GAME;
+				playerShoot = false;
 			}
 		}
 		/* Helper function to calculate alien speeds as they die.*/
@@ -341,7 +351,21 @@ function Game(new_canvas) {
     		drawDefeatScreen();
     	} else if (currentState == STATE_WIN) {
     		drawWinScreen();
+    	} else if (currentState == STATE_START) {
+    		drawStartScreen();
     	}
+	}
+
+	/*** Draw a black screen, seen at game start.*/
+	function drawStartScreen() {
+		context.fillStyle = "rgb(0,0,0)";
+		context.fillRect (0, 0, canvas.width, canvas.height);
+		context.fillStyle = "rgb(255, 255, 255)";
+		context.font = "bold 16px sans-serif";
+		context.fillText("Space Invaders", canvas.width / 3, canvas.height / 2);
+		context.font = "bold 12px sans-serif";
+		context.fillText("Press Space to start!", 
+			canvas.width / 5, canvas.height / 2 + canvas.height / 4);
 	}
 
 	/*** Draw a black screen with score. */
@@ -356,7 +380,7 @@ function Game(new_canvas) {
 			canvas.width / 5, canvas.height / 2 + canvas.height / 4);
 	}
 
-	/*** */
+	/*** Draw a black screen, saying weiner. */
 	function drawWinScreen() {
 		context.fillStyle = "rgb(0,0,0)";
 		context.fillRect (0, 0, canvas.width, canvas.height);
