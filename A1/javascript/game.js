@@ -164,9 +164,9 @@ function Game(new_canvas) {
 		// Helper function for setting invader value.
 		function getInvaderValue(i) {
 			var ret = 10;
-			if (i == 4) {
+			if (i == 0) {
 				ret = 80;
-			} else if (i > 1) {
+			} else if (i < 3) {
 				ret = 20;
 			}
 			return ret;
