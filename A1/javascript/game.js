@@ -87,7 +87,7 @@ function Game(new_canvas) {
 	var NUM_COLS = 10;
 	this.FPS = 30;
 	
-	/* Create Canvas */
+	/* Canvas and Context */
 	var canvas = new_canvas;
 	var context = canvas.getContext('2d');
 	
@@ -95,10 +95,16 @@ function Game(new_canvas) {
 	var invader_leftLimit;
 	var invader_rightLimit;
 	var invader_bottomLimit;
-	var direction;
+	var invader_vector;
 	var invadersAlive;
-	
 
+	// Screen Display Logic
+	var STATE_GAME = 0;
+	var STATE_WIN = 1;
+	var STATE_DEFEAT = 2;
+	var STATE_START = 3;
+	var currentState;
+	
 	// The score and difficulty is persistent between setups.
 	var score = 0;
 	var difficulty = 1;
@@ -125,8 +131,9 @@ function Game(new_canvas) {
 		invader_leftLimit = 0;
 		invader_rightLimit = NUM_COLS - 1;
 		invader_bottomLimit = NUM_ROWS - 1;
-		direction = 1;
+		invader_vector = 1;
 		invadersAlive = 50;
+		currentState = STATE_GAME;
 
 		// Create player and laser
 		player = new Player(canvas.width / 2, canvas.height - 25);
@@ -158,33 +165,51 @@ function Game(new_canvas) {
 
 	/*** Update the logic of the game. */
 	this.update = function() {
-		// Main invader loop.
-		for (var i = 0; i < NUM_ROWS; i++) {
-			for (var j = 0; j < NUM_COLS; j++) {
-				// Check collision.
-				if (invaders[i][j].alive &&
-				laser.alive &&
-				invaders[i][j].touches(laser)) {
-					laser.alive = false;
-					invaders[i][j].alive = false;
-					updateInvaderWallLimits();
-					score += invaders[i][j].value;
-					invadersAlive--;
+		if (currentState == STATE_GAME) {
+			// Main invader loop.
+			for (var i = 0; i < NUM_ROWS; i++) {
+				for (var j = 0; j < NUM_COLS; j++) {
+					// Check collision.
+					if (invaders[i][j].alive &&
+					laser.alive &&
+					invaders[i][j].touches(laser)) {
+						laser.alive = false;
+						invaders[i][j].alive = false;
+						updateInvaderWallLimits();
+						score += invaders[i][j].value;
+						invadersAlive--;
+					}
+					// Move them one unit left.
+					invaders[i][j].x = (invaders[i][j].x) + 
+						((invader_vector) * speedCalc());
 				}
-				// Move them one unit left.
-				invaders[i][j].x = (invaders[i][j].x) + ((direction) * speedCalc());
+			}
+			checkInvaderWallLimit();
+			checkPlayerInput();
+			updateLaser();
+			checkWinDefeat();
+		} else if (currentState == STATE_WIN) {
+			// Player pressing "space to continue."
+			if (playerShoot) {
+				setup();
+				difficulty = difficulty + 0.25;
+				currentState = STATE_GAME;
+			}
+		} else if (currentState == STATE_DEFEAT) {
+			// Player pressing "space to continue."
+			if (playerShoot) {
+				setup();
+				score = 0;
+				difficulty = 1;
+				currentState = STATE_GAME;
 			}
 		}
-		checkInvaderWallLimit();
-		checkPlayerInput();
-		updateLaser();
-		checkWinDefeat();
-
 		/* Helper function to calculate alien speeds as they die.*/
 		function speedCalc() {
 			return (0.4 + 0.01 * (50 - invadersAlive)) * difficulty;
 		}
 	}
+
 
 	/*** Update the position of the laser. */
 	function updateLaser() {
@@ -222,7 +247,7 @@ function Game(new_canvas) {
 		if ((invaders[0][invader_leftLimit].x < 0)
 			|| (invaders[0][invader_rightLimit].x + 
 				invaders[0][invader_rightLimit].width  > canvas.width)) {
-			direction = direction * -1;
+			invader_vector = invader_vector * -1;
 			// drop (wub wub wub)
 			for (var i = 0; i < NUM_ROWS; i++) {
 				for (var j = 0; j < NUM_COLS; j++) {
@@ -260,26 +285,13 @@ function Game(new_canvas) {
 	function checkWinDefeat() {
 		// Check for win
 		if (invadersAlive == 0) {
-			setup();
-			difficulty += 0.25;
-			showWinScreen();
+			currentState = STATE_WIN;
 		}
 
 		// Check for defeat.
-		if (invaders[invader_bottomLimit][0].y > canvas.height - 35) {
-			setup();
-			score = 0;
-			showDefeatScreen();
+		if (invaders[invader_bottomLimit][0].y > canvas.height - 50) {
+			currentState = STATE_DEFEAT;
 		}
-	}
-
-	
-	function showWinScreen() {
-		
-	}
-
-	function showDefeatScreen(){
-		
 	}
 
 
@@ -315,14 +327,45 @@ function Game(new_canvas) {
 	/*** Clear the screen, then draw all entities onto the screen. */
 	this.draw = function() {
 		wipeCanvas();
-        for (var i = 0; i < NUM_ROWS; i++) {
-			for (var j = 0; j < NUM_COLS; j++) {
-				invaders[i][j].draw(context);
+
+		if (currentState == STATE_GAME) {
+	        for (var i = 0; i < NUM_ROWS; i++) {
+				for (var j = 0; j < NUM_COLS; j++) {
+					invaders[i][j].draw(context);
+				}
 			}
-		}
-        player.draw(context);
-        laser.draw(context);
-        drawScore();
+	        player.draw(context);
+	        laser.draw(context);
+	        drawScore();
+    	} else if (currentState == STATE_DEFEAT) {
+    		drawDefeatScreen();
+    	} else if (currentState == STATE_WIN) {
+    		drawWinScreen();
+    	}
+	}
+
+	/*** Draw a black screen with score. */
+	function drawDefeatScreen() {
+		context.fillStyle = "rgb(0,0,0)";
+		context.fillRect (0, 0, canvas.width, canvas.height);
+		context.fillStyle = "rgb(255, 255, 255)";
+		context.font = "bold 20px sans-serif";
+		context.fillText(score, canvas.width / 2, canvas.height / 2);
+		context.font = "bold 12px sans-serif";
+		context.fillText("Press Space to continue.", 
+			canvas.width / 5, canvas.height / 2 + canvas.height / 4);
+	}
+
+	/*** */
+	function drawWinScreen() {
+		context.fillStyle = "rgb(0,0,0)";
+		context.fillRect (0, 0, canvas.width, canvas.height);
+		context.fillStyle = "rgb(255, 255, 255)";
+		context.font = "bold 30px sans-serif";
+		context.fillText("Winner!", canvas.width / 3, canvas.height / 2);
+		context.font = "bold 12px sans-serif";
+		context.fillText("Press Space to continue.", 
+			canvas.width / 5, canvas.height / 2 + canvas.height / 4);
 	}
 
 	/*** Display the current score. */
