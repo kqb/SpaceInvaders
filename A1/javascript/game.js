@@ -19,7 +19,6 @@ function Laser(new_x, new_y, new_vector) {
 			canvas.fillStyle = "rgb(0,0,0)";
 		    canvas.fillRect (this.x, this.y, this.width, this.height);
 		}
-		return 0;
 	}
 }
 
@@ -47,7 +46,6 @@ function Invader(new_x, new_y, new_value) {
 			canvas.fillStyle = "rgb(0, 200,0)";
 		    canvas.fillRect (this.x, this.y, this.width, this.height);
 		}
-		return 0;
 	}
 }
 
@@ -71,7 +69,6 @@ function Player(new_x, new_y) {
 	this.draw = function (canvas) {
 		canvas.fillStyle = "rgb(200,0,0)";
 	    canvas.fillRect (this.x, this.y, this.width, this.height);
-		return 0;
 	}
 }
 
@@ -82,13 +79,13 @@ function Player(new_x, new_y) {
 ****************************/
 
 function Game(new_canvas) {
+	// Constant/Final Variables
 	var SCORE_BAR = 15;
 	var NUM_ROWS = 5;
 	var NUM_COLS = 10;
-	var MAX_LASERS = 5;
 	this.FPS = 30;
 	
-	/* Canvas and Context */
+	// Canvas and Context
 	var canvas = new_canvas;
 	var context = canvas.getContext('2d');
 	
@@ -117,10 +114,15 @@ function Game(new_canvas) {
 	var playerMoveRight = false;
 	var playerShoot = false;
 
-	/* Create Player and Invaders*/
+	// Create Player and Invaders
 	var laser;
 	var player;
 	var invaders = [];
+
+	// Invaders firing back at the player.
+	var MAX_LASERS = 5;
+	var CHANCE_LASERS = 10; //percent
+	var invader_mostBottomInvaders = [];
 	var invaderLasers = [];
 	
 
@@ -155,7 +157,7 @@ function Game(new_canvas) {
 		}
 
 		// Create invade lasers.
-		for (var i = 0; i < MAX_LASERS; i++) {
+		for (var i = 0; i < NUM_COLS; i++) {
 			invaderLasers[i] = new Laser(0, 0, 0);
 		}
 
@@ -199,6 +201,7 @@ function Game(new_canvas) {
 			checkInvaderWallLimit();
 			checkPlayerInput();
 			updateLaser();
+			invadersShoot();
 			checkWinDefeat();
 		} else if (currentState == STATE_WIN) {
 			// Player pressing "space to continue."
@@ -230,6 +233,11 @@ function Game(new_canvas) {
 		}
 	}
 
+	/*** At random times, a random column of aliens will shoot back.*/
+	function invadersShoot() {
+		// do a check to shoot
+		// if true, select a random invader to shoot from.
+	}
 
 	/*** Update the position of the laser. */
 	function updateLaser() {
@@ -280,9 +288,16 @@ function Game(new_canvas) {
 	/*** Updates the point where the invaders change direction.
 	This also checks for the current lowest invader to check for defeat. */
 	function updateInvaderWallLimits() {
+		// Reset the values for the various limits of where the invaders are.
 		invader_leftLimit = NUM_COLS - 1;
 		invader_rightLimit = 0;
-		invader_bottomLimit = 0
+		invader_bottomLimit = 0;
+		// Create most bottom invader array.
+		for (var i = 0; i < NUM_COLS; i++) {
+			invader_mostBottomInvaders[i] = 0;
+		}
+		
+		// Update the values.
 		for (var i = 0; i < NUM_ROWS; i++) {
 			for (var j = 0; j < NUM_COLS; j++) {
 				// Find the left-most invader.			
@@ -292,6 +307,12 @@ function Game(new_canvas) {
 				// Find the right-most invader.
 				if (invaders[i][j].alive && j > invader_rightLimit) {
 					invader_rightLimit = j;
+				}
+
+				// Find the lowest invader for each column.
+				if (invaders[i][j].alive && i > 
+					invader_mostBottomInvaders[j]) {
+					invader_mostBottomInvaders[j] = i; 
 				}
 				// Find the lowest invader.
 				if (invaders[i][j].alive && i > invader_bottomLimit) {
