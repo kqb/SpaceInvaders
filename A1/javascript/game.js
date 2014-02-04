@@ -85,6 +85,7 @@ function Game(new_canvas) {
 	var SCORE_BAR = 15;
 	var NUM_ROWS = 5;
 	var NUM_COLS = 10;
+	var MAX_LASERS = 5;
 	this.FPS = 30;
 	
 	/* Canvas and Context */
@@ -99,6 +100,8 @@ function Game(new_canvas) {
 	var invadersAlive;
 
 	// Screen Display Logic
+	/* We change the game state (e.g. start screen or in-game) by 
+	setting the currentState Variable. */
 	var STATE_GAME = 0;
 	var STATE_WIN = 1;
 	var STATE_DEFEAT = 2;
@@ -119,6 +122,7 @@ function Game(new_canvas) {
 	var player;
 	var invaders = [];
 	var invaderLasers = [];
+	
 
 	// Run game setup.
 	setup();
@@ -148,6 +152,11 @@ function Game(new_canvas) {
 			for (var j = 0; j < NUM_COLS; j++) {
 				invaders[i][j] = new Invader(j * 15, (i * 15) + 20, getInvaderValue(i));
 			}
+		}
+
+		// Create invade lasers.
+		for (var i = 0; i < MAX_LASERS; i++) {
+			invaderLasers[i] = new Laser(0, 0, 0);
 		}
 
 		// Helper function for setting invader value.
@@ -259,7 +268,7 @@ function Game(new_canvas) {
 			|| (invaders[0][invader_rightLimit].x + 
 				invaders[0][invader_rightLimit].width  > canvas.width)) {
 			invader_vector = invader_vector * -1;
-			// drop (wub wub wub)
+			// Invader drop (wub wub wub)
 			for (var i = 0; i < NUM_ROWS; i++) {
 				for (var j = 0; j < NUM_COLS; j++) {
 					invaders[i][j].y = invaders[i][j].y + 5;
@@ -338,16 +347,8 @@ function Game(new_canvas) {
 	/*** Clear the screen, then draw all entities onto the screen. */
 	this.draw = function() {
 		wipeCanvas();
-
 		if (currentState == STATE_GAME) {
-	        for (var i = 0; i < NUM_ROWS; i++) {
-				for (var j = 0; j < NUM_COLS; j++) {
-					invaders[i][j].draw(context);
-				}
-			}
-	        player.draw(context);
-	        laser.draw(context);
-	        drawScore();
+			drawGameScreen();
     	} else if (currentState == STATE_DEFEAT) {
     		drawDefeatScreen();
     	} else if (currentState == STATE_WIN) {
@@ -393,9 +394,17 @@ function Game(new_canvas) {
 			canvas.width / 5, canvas.height / 2 + canvas.height / 4);
 	}
 
-	/*** Display the current score. */
-	function drawScore() {
-		context.fillStyle = "rgb(0, 0,0)";
+	/*** The main game screen*/
+	function drawGameScreen() {
+		for (var i = 0; i < NUM_ROWS; i++) {
+			for (var j = 0; j < NUM_COLS; j++) {
+				invaders[i][j].draw(context);
+			}
+		}
+        player.draw(context);
+        laser.draw(context);
+        //Draw the score
+        context.fillStyle = "rgb(0, 0,0)";
 		context.fillRect (0, 0, canvas.width, SCORE_BAR);
 		context.fillStyle = "rgb(255, 255, 255)";
 		context.font = "bold 14px sans-serif";
