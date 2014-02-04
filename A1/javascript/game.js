@@ -118,6 +118,7 @@ function Game(new_canvas) {
 	var laser;
 	var player;
 	var invaders = [];
+	var invaderLasers = [];
 
 	// Run game setup.
 	setup();
@@ -239,7 +240,7 @@ function Game(new_canvas) {
 			player.x = player.x - 5;
 		}
 
-		if (playerMoveRight && player.x + player.width <= canvas.width) {
+		if (playerMoveRight && player.x + player.width < canvas.width) {
 			player.x = player.x + 5;
 		}
 
