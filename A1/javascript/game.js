@@ -212,6 +212,7 @@ function Game(new_canvas) {
 						invaderLasers[j].alive = false;
 						resetLasers();
 						currentState = STATE_DEFEAT;
+						playerShoot = false;
 					}
 
 					// Check collision for invader vs plasyer laser.
