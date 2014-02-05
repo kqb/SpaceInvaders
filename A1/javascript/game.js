@@ -16,7 +16,7 @@ function Laser(new_x, new_y, new_vector) {
 
 	this.draw = function (canvas) {
 		if (this.alive) {
-			canvas.fillStyle = "rgb(15,24,255)";
+			canvas.fillStyle = "rgb(0,0,0)";
 		    canvas.fillRect (this.x, this.y, this.width, this.height);
 		}
 	}
@@ -38,7 +38,7 @@ function Invader(new_x, new_y, new_value) {
 		return  this.x < other.x + other.width  &&
 				this.x + this.width  > other.x &&
     			this.y < other.y + other.height &&
-    			this.y + this.height > other.y;	
+    			this.y + this.height > other.y;
 	}
 
 	this.draw = function (canvas) {
@@ -83,7 +83,6 @@ function Game(new_canvas) {
 	var SCORE_BAR = 15;
 	var NUM_ROWS = 5;
 	var NUM_COLS = 10;
-	var BOTTOM = 200
 	this.FPS = 30;
 	
 	// Canvas and Context
@@ -117,16 +116,14 @@ function Game(new_canvas) {
 
 	// Create Player and Invaders
 	var laser;
-	var invaderLaser;
 	var player;
 	var invaders = [];
 
 	// Invaders firing back at the player.
-	var MAX_LASERS = 4;
-	var CHANCE_LASERS = 8; //percent
+	var MAX_LASERS = 5;
+	var CHANCE_LASERS = 10; //percent
 	var invader_mostBottomInvaders = [];
 	var invaderLasers = [];
-	var laserCount = 0;
 	
 
 	// Run game setup.
@@ -186,16 +183,6 @@ function Game(new_canvas) {
 			// Main invader loop.
 			for (var i = 0; i < NUM_ROWS; i++) {
 				for (var j = 0; j < NUM_COLS; j++) {
-								// Check collision.
-					var target = invaderLasers[j];
-					if (invaderLasers[j].alive &&
-					player.touches(target)) {
-						invaderLasers[j].alive = false;
-						resetLasers();
-						currentState = STATE_DEFEAT;
-						break;
-					}
-
 					// Check collision.
 					if (invaders[i][j].alive &&
 					laser.alive &&
@@ -212,15 +199,10 @@ function Game(new_canvas) {
 				}
 			}
 			checkInvaderWallLimit();
-			invadersShoot();
-			updateInvaderLaser();
 			checkPlayerInput();
 			updateLaser();
+			invadersShoot();
 			checkWinDefeat();
-			
-			
-
-
 		} else if (currentState == STATE_WIN) {
 			// Player pressing "space to continue."
 			if (playerShoot) {
@@ -255,22 +237,6 @@ function Game(new_canvas) {
 	function invadersShoot() {
 		// do a check to shoot
 		// if true, select a random invader to shoot from.
-		// generate random integer between 0 to 9
-		var randInd = Math.floor((Math.random()*NUM_COLS));
-		var randInd2 = Math.floor((Math.random()*NUM_ROWS));
-		var randChance = Math.floor((Math.random()*100));
-
-		if (invaders[randInd2][randInd].alive && randChance <= CHANCE_LASERS
-		 	&& laserCount < MAX_LASERS) {
-			if (!invaderLasers[randInd].alive) {
-				invaderLasers[randInd].x = invaders[randInd2][randInd].x + (laser.width / 2);
-				invaderLasers[randInd].y = invaders[randInd2][randInd].y;
-				invaderLasers[randInd].vector = -5;
-				invaderLasers[randInd].alive = true;
-				laserCount += 1;
-				
-			}
-		}
 	}
 
 	/*** Update the position of the laser. */
@@ -280,20 +246,6 @@ function Game(new_canvas) {
 			// kill laser off-screen
 			if (laser.y < SCORE_BAR) {
 				laser.alive = false;
-			}
-		}
-	}
-	
-	/*** Update the position of the invader lasers. */
-	function updateInvaderLaser() {
-		for (var j = 0; j < NUM_COLS; j++) {
-			if (invaderLasers[j].alive) {
-				invaderLasers[j].y = invaderLasers[j].y - invaderLasers[j].vector;
-				// kill laser off-screen
-				if (invaderLasers[j].y >= BOTTOM) {
-					invaderLasers[j].alive = false;
-					laserCount -= 1;
-				}
 			}
 		}
 	}
@@ -332,8 +284,6 @@ function Game(new_canvas) {
 			}
 		}
 	}
-
-
 
 	/*** Updates the point where the invaders change direction.
 	This also checks for the current lowest invader to check for defeat. */
@@ -381,18 +331,9 @@ function Game(new_canvas) {
 
 		// Check for defeat.
 		if (invaders[invader_bottomLimit][0].y > canvas.height - 50) {
-			resetLasers();
 			currentState = STATE_DEFEAT;
 		}
 	}
-
-	/*** Set invader lasers to not alive. */
-	function resetLasers() {
-		for (var j = 0; j < NUM_COLS; j++) {
-			invaderLasers[j].alive = false;
-		}
-	}
-
 
 
 
@@ -482,12 +423,9 @@ function Game(new_canvas) {
 			}
 		}
         player.draw(context);
-        for (var i = 0 ; i < NUM_COLS; i++) {
-        	invaderLasers[i].draw(context);	
-        }
         laser.draw(context);
         //Draw the score
-        context.fillStyle = "rgb(0, 0, 0)";
+        context.fillStyle = "rgb(0, 0,0)";
 		context.fillRect (0, 0, canvas.width, SCORE_BAR);
 		context.fillStyle = "rgb(255, 255, 255)";
 		context.font = "bold 14px sans-serif";
