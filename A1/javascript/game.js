@@ -1,3 +1,22 @@
+/*
+CSC309 Assignment 1; Feburary 7 2014
+Alexander Sirotkin (g2sirotk; 996328852)
+Katie Lo (???; ???)
+*/
+
+/*
+
+TO-DO LIST:
+[ ] Update graphics.
+[ ] Add a "current level" display.\
+[ ] As the levels increase, the speed of the lasers and other
+    checks should increase. 
+[ ] Only the bottom aliens should shoot. 
+[ ] Player lives
+
+*/
+
+
 /****************************
 
 		Game Entities
@@ -83,7 +102,7 @@ function Game(new_canvas) {
 	var SCORE_BAR = 15;
 	var NUM_ROWS = 5;
 	var NUM_COLS = 10;
-	var BOTTOM = 200
+	var BOTTOM = 200;
 	this.FPS = 30;
 	
 	// Canvas and Context
@@ -186,17 +205,16 @@ function Game(new_canvas) {
 			// Main invader loop.
 			for (var i = 0; i < NUM_ROWS; i++) {
 				for (var j = 0; j < NUM_COLS; j++) {
-								// Check collision.
+					// Check collision for invaders vs player laser.
 					var target = invaderLasers[j];
 					if (invaderLasers[j].alive &&
 					player.touches(target)) {
 						invaderLasers[j].alive = false;
 						resetLasers();
 						currentState = STATE_DEFEAT;
-						break;
 					}
 
-					// Check collision.
+					// Check collision for invader vs plasyer laser.
 					if (invaders[i][j].alive &&
 					laser.alive &&
 					invaders[i][j].touches(laser)) {
@@ -217,8 +235,6 @@ function Game(new_canvas) {
 			checkPlayerInput();
 			updateLaser();
 			checkWinDefeat();
-			
-			
 
 
 		} else if (currentState == STATE_WIN) {
@@ -376,13 +392,16 @@ function Game(new_canvas) {
 	function checkWinDefeat() {
 		// Check for win
 		if (invadersAlive == 0) {
+			resetLasers();
 			currentState = STATE_WIN;
+			playerShoot = false;
 		}
 
 		// Check for defeat.
 		if (invaders[invader_bottomLimit][0].y > canvas.height - 50) {
 			resetLasers();
 			currentState = STATE_DEFEAT;
+			playerShoot = false;
 		}
 	}
 
@@ -391,6 +410,7 @@ function Game(new_canvas) {
 		for (var j = 0; j < NUM_COLS; j++) {
 			invaderLasers[j].alive = false;
 		}
+		laserCount = 0;
 	}
 
 
