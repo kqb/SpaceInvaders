@@ -1,63 +1,45 @@
 /*
 CSC309 Assignment 1; Feburary 7 2014
 Alexander Sirotkin (g2sirotk; 996328852)
-Katie Lo (???; ???)
+Katie Lo (g3lanaya; 998493848)
 */
 
 /*
 
 TO-DO LIST:
-[ ] Update graphics.
-[ ] Add a "current level" display.\
-[ ] As the invaders die increase, the speed of the lasers and other
+[x] Update graphics.
+[x] Add a "current level" display.\
+[x] As the invaders die increase, the speed of the lasers and other
     checks should increase. 
-[ ] Only the bottom aliens should shoot. 
-[ ] Player lives
+[x] Only the bottom aliens should shoot. 
+[x] Player lives
+
+ALL DONE MADAFAKA :D
 
 */
+
+/*** Global Variables */
+
+var timer = 0;
+var img = new loadimg();
 
 	/****************************
 			Load Assets
 	****************************/
-var img = new loadimg();
+
+
 function loadimg() {
 	this.bg = new Image();
-	// this.ship = new Image();
 	this.player = new Image();
 	this.laser1 = new Image();
 	this.laser2 = new Image();
 	this.alien1 = new Image();
 	this.alien2 = new Image();
 	this.alien3 = new Image();
-	this.alien3 = new Image();
+	this.aalien1 = new Image();
+	this.aalien2 = new Image();
+	this.aalien3 = new Image();
 	this.explosion = new Image();
-
-
-	// Ensure all images have loaded before starting the game
-	// var numImages = 5;
-	// var numLoaded = 0;
-	// function imageLoaded() {
-	// 	numLoaded++;
-	// 	if (numLoaded === numImages) {
-	// 	  run();
-	// 	}
-	// }
-	// this.bg.onload = function() {
-	// 	imageLoaded();
-	// }
-	// this.laser1.onload = function() {
-	// 	imageLoaded();
-	// }
-	// this.alien1.onload = function() {
-	// 	imageLoaded();
-	// }
-	// this.alien2.onload = function() {
-	// 	imageLoaded();
-	// }
-
-	// 	this.alien3.onload = function() {
-	// 	imageLoaded();
-	// }
 	
 	this.bg.src = "img/spacebg.gif";
 	this.player.src = "img/ship.png";
@@ -65,7 +47,10 @@ function loadimg() {
 	this.laser2.src = "img/l2.png";
 	this.alien1.src = "img/a1.png";
 	this.alien2.src = "img/a2.png";
-	this.alien3.src = "img/l1.png";
+	this.alien3.src = "img/a3.png";
+	this.aalien1.src = "img/aa1.png";
+	this.aalien2.src = "img/aa2.png";
+	this.aalien3.src = "img/aa3.png";
 	this.explosion.src = "img/explosion.png"
 }
 
@@ -88,7 +73,7 @@ function Laser(new_x, new_y, new_vector) {
 
 	this.draw = function (canvas) {
 		if (this.alive) {
-			canvas.drawImage(img.laser1, this.x+10, this.y, this.width, this.height);
+			canvas.drawImage(img.laser1, this.x, this.y, this.width, this.height);
 		}
 	}
 }
@@ -105,18 +90,20 @@ function invLaser(new_x, new_y, new_vector) {
 
 	this.draw = function (canvas) {
 		if (this.alive) {
-			canvas.drawImage(img.laser2, this.x+10, this.y, this.width, this.height);
+						// canvas.fillStyle = "rgb(0, 200,0)";
+		 //    canvas.fillRect (this.x, this.y, this.width, this.height);
+			canvas.drawImage(img.laser2, this.x, this.y, this.width, this.height);
 		}
 	}
 }
 
-/*** The basic enemy in space invaders. */
-function Invader(new_x, new_y, new_value) {
+/*** The tier3 enemy in space invaders. */
+function Invader3(new_x, new_y, new_value) {
 	// Canvas Location
 	this.x = new_x;
 	this.y = new_y;
 	this.width = 30;
-	this.height = 30;
+	this.height = 20;
 	this.alive = true;
 	this.value = new_value;
 
@@ -133,11 +120,90 @@ function Invader(new_x, new_y, new_value) {
 		if (this.alive) {
 			// canvas.fillStyle = "rgb(0, 200,0)";
 		 //    canvas.fillRect (this.x, this.y, this.width, this.height);
-		    canvas.drawImage(img.alien1, this.x, this.y, this.width, this.height);
+		 	if (timer % 35 > 17){
+		    canvas.drawImage(img.alien3, this.x, this.y, this.width, this.height);
+			} else {
+				canvas.drawImage(img.aalien3, this.x, this.y, this.width, this.height);
+			}
 		}
 	}
 	this.drawExplosion = function (canvas) {
+		if (!this.alive) {
+			canvas.drawImage(img.laser1, this.x+10, this.y, this.width, this.height);
+		}
+	}
+}
+
+/*** The tier2 enemy in space invaders. */
+function Invader2(new_x, new_y, new_value) {
+	// Canvas Location
+	this.x = new_x;
+	this.y = new_y;
+	this.width = 27.5;
+	this.height = 20;
+	this.alive = true;
+	this.value = new_value;
+
+	/*** Returns true if this entity and Entity otherEntity intersect. 
+	False otherwise.*/
+	this.touches = function (other) {
+		return  this.x < other.x + other.width  &&
+				this.x + this.width  > other.x &&
+    			this.y < other.y + other.height &&
+    			this.y + this.height > other.y;	
+	}
+
+	this.draw = function (canvas) {
 		if (this.alive) {
+			// canvas.fillStyle = "rgb(0, 200,0)";
+		 //    canvas.fillRect (this.x, this.y, this.width, this.height);
+		 	if (timer % 35 > 17){
+		    canvas.drawImage(img.alien2, this.x, this.y, this.width, this.height);
+			} else {
+				canvas.drawImage(img.aalien2, this.x, this.y, this.width, this.height);
+			}
+		}
+	}
+	this.drawExplosion = function (canvas) {
+		if (!this.alive) {
+			canvas.drawImage(img.laser1, this.x+10, this.y, this.width, this.height);
+		}
+	}
+}
+
+
+/*** The tier1 enemy in space invaders. */
+function Invader1(new_x, new_y, new_value) {
+	// Canvas Location
+	this.x = new_x;
+	this.y = new_y;
+	this.width = 22.5;
+	this.height = 20;
+	this.alive = true;
+	this.value = new_value;
+
+	/*** Returns true if this entity and Entity otherEntity intersect. 
+	False otherwise.*/
+	this.touches = function (other) {
+		return  this.x < other.x + other.width  &&
+				this.x + this.width  > other.x &&
+    			this.y < other.y + other.height &&
+    			this.y + this.height > other.y;	
+	}
+
+	this.draw = function (canvas) {
+		if (this.alive) {
+			// canvas.fillStyle = "rgb(0, 200,0)";
+		 //    canvas.fillRect (this.x, this.y, this.width, this.height);
+		 	if (timer % 35 > 17){
+		    canvas.drawImage(img.alien1, this.x, this.y, this.width, this.height);
+			} else {
+				canvas.drawImage(img.aalien1, this.x, this.y, this.width, this.height);
+			}
+		}
+	}
+	this.drawExplosion = function (canvas) {
+		if (!this.alive) {
 			canvas.drawImage(img.laser1, this.x+10, this.y, this.width, this.height);
 		}
 	}
@@ -150,6 +216,7 @@ function Player(new_x, new_y) {
 	this.y = new_y;
 	this.width = 30;
 	this.height = 30;
+	this.alive = true;
 
 
 	/*** Returns true if this entity and Entity otherEntity intersect. 
@@ -162,8 +229,20 @@ function Player(new_x, new_y) {
 	}
 
 	this.draw = function (canvas) {
-		canvas.drawImage(img.player, this.x, this.y, this.width, this.height);
+		if (this.alive) {
+			// canvas.fillStyle = "rgb(0, 200,0)";
+		 //    canvas.fillRect (this.x, this.y, this.width, this.height);
+		    canvas.drawImage(img.player, this.x, this.y, this.width, this.height);
+		}
 	}
+
+	this.drawExplosion = function (canvas) {
+		if (!this.alive) {
+			canvas.drawImage(img.explosion, this.x+10, this.y, this.width, this.height);
+		}
+	}
+
+
 }
 
 
@@ -181,12 +260,14 @@ function Game(new_canvas) {
 	var NUM_COLS = 10;
 	var BOTTOM = 600;
 	var LIVES = 3
-	this.FPS = 30;
+	this.FPS = 35;
+	
 
 	
 	// Canvas and Context
 	var canvas = new_canvas;
 	var context = canvas.getContext('2d');
+	var bgYAxis = 0;
 
 	
 	// Game Logic
@@ -195,6 +276,8 @@ function Game(new_canvas) {
 	var invader_bottomLimit;
 	var invader_vector;
 	var invadersAlive;
+	var currentLives = LIVES;
+	var frameCount = 0;
 
 	// Screen Display Logic
 	/* We change the game state (e.g. start screen or in-game) by 
@@ -203,6 +286,7 @@ function Game(new_canvas) {
 	var STATE_WIN = 1;
 	var STATE_DEFEAT = 2;
 	var STATE_START = 3;
+	var STATE_RESPAWN = 4;
 	var currentState;
 	
 	// The score and difficulty is persistent between setups.
@@ -210,10 +294,12 @@ function Game(new_canvas) {
 	var difficulty = 1;
 	var level = 1;
 
+
 	// Player Movement
 	var playerMoveLeft = false;
 	var playerMoveRight = false;
 	var playerShoot = false;
+	var playerLaserVector = -10
 
 	// Create Player and Invaders
 	var laser;
@@ -226,6 +312,7 @@ function Game(new_canvas) {
 	var CHANCE_LASERS = 2; //percent
 	var currNumLasers = 4;
 	var currLaserChance = 2;
+	var invaderLaserVector = -5;
 	var invader_mostBottomInvaders = [];
 	var invaderLasers = [];
 	var laserCount = 0;
@@ -254,10 +341,24 @@ function Game(new_canvas) {
 		laser = new Laser(0, 0, 0);
 
 		// Create invaders.
-		for (var i = 0; i < NUM_ROWS; i++) {
+		for (var i = 0; i < 2; i++) {
 			invaders[i] = [];
 			for (var j = 0; j < NUM_COLS; j++) {
-				invaders[i][j] = new Invader(j * 45, (i * 45) + 60, getInvaderValue(i));
+				invaders[i][j] = new Invader1(j * 40+7.5/2, (i * 40) + 50, getInvaderValue(i));
+			}
+		}
+
+		for (var i = 1; i < 3; i++) {
+			invaders[i] = [];
+			for (var j = 0; j < NUM_COLS; j++) {
+				invaders[i][j] = new Invader2(j * 40+2.5/2, (i * 40) + 50, getInvaderValue(i));
+			}
+		}
+
+		for (var i = 3; i < 5; i++) {
+			invaders[i] = [];
+			for (var j = 0; j < NUM_COLS; j++) {
+				invaders[i][j] = new Invader3(j * 40, (i * 40) + 50, getInvaderValue(i));
 			}
 		}
 
@@ -291,11 +392,17 @@ function Game(new_canvas) {
 					// Check collision for invaders vs player laser.
 					var target = invaderLasers[j];
 					if (invaderLasers[j].alive &&
-					player.touches(target)) {
-						invaderLasers[j].alive = false;
-						resetLasers();
-						currentState = STATE_DEFEAT;
-						playerShoot = false;
+					player.touches(target) && player.alive) {
+						if (currentLives <= 0){
+							invaderLasers[j].alive = false;
+							resetLasers();
+							currentState = STATE_DEFEAT;
+							playerShoot = false;
+						} else {
+							invaderLasers[j].alive = false;
+							currentLives -= 1;
+							respawn();
+						}
 					}
 
 					// Check collision for invader vs plasyer laser.
@@ -313,11 +420,9 @@ function Game(new_canvas) {
 						((invader_vector) * speedCalc());
 				}
 			}
+			timer += 1; // Update timer.
 			checkInvaderWallLimit();
 			updateInvaderWallLimits();
-			// for (var i=0; i<NUM_COLS; i++){
-			// 				alert(invader_mostBottomInvaders.toString());
-			// 			}
 			invadersShoot();
 			updateInvaderLaser();
 			checkPlayerInput();
@@ -332,7 +437,10 @@ function Game(new_canvas) {
 				difficulty = difficulty + 0.25;
 				// Increase chance for invader laser to increase difficulty after win.
 				currLaserChance += 5;
-				currNumLasers += 1
+				currNumLasers += 2;
+				level += 1;
+				invaderLaserVector -= 2;
+				playerLaserVector -= 1;
 				currentState = STATE_GAME;
 				playerShoot = false;
 			}
@@ -342,18 +450,33 @@ function Game(new_canvas) {
 				setup();
 				score = 0;
 				difficulty = 1;
+				level = 1;
 				// Reset chance for invader laser to default value upon defeat.
 				currLaserChance = CHANCE_LASERS;
+				invaderLaserVector = -5;
+				playerLaserVector = -10;
 				currNumLasers += MAX_LASERS;
 				currentState = STATE_GAME;
 				playerShoot = false;
+				currentLives = LIVES;
+				 
 			}
 		} else if (currentState == STATE_START) {
 			// Player pressing "space to start."
 			if (playerShoot) {
 				currentState = STATE_GAME;
 				playerShoot = false;
-			}
+
+			} 
+		} else if (currentState ==STATE_RESPAWN) {
+				if (frameCount == 70){
+				    resetLasers();
+					player = new Player(canvas.width / 2, canvas.height - 75);
+					currentState = STATE_GAME;
+					frameCount = 0;
+
+				}
+
 		}
 		/* Helper function to calculate alien speeds as they die.*/
 		function speedCalc() {
@@ -367,22 +490,17 @@ function Game(new_canvas) {
 		// if true, select a random invader to shoot from.
 		// generate random integer between 0 to 9
 		var randInd = Math.floor((Math.random()*NUM_COLS));
-		// var a = invader_mostBottomInvaders[0];
-		var randInd2 = Math.floor((Math.random()*NUM_ROWS));
 		var randChance = Math.floor((Math.random()*100));
-		// alert(a.toString());
-
-
 
 		if (invaders[invader_mostBottomInvaders[randInd]][randInd].alive && randChance <= currLaserChance
 		 	&& laserCount < currNumLasers) {
 			if (!invaderLasers[randInd].alive) {
-				invaderLasers[randInd].x = invaders[invader_mostBottomInvaders[randInd]][randInd].x + (laser.width / 2);
+				invaderLasers[randInd].x = invaders[invader_mostBottomInvaders[randInd]][randInd].x + 
+				(invaders[invader_mostBottomInvaders[randInd]][randInd].width / 2);
 				invaderLasers[randInd].y = invaders[invader_mostBottomInvaders[randInd]][randInd].y;
-				invaderLasers[randInd].vector = -5;
+				invaderLasers[randInd].vector = invaderLaserVector;
 				invaderLasers[randInd].alive = true;
 				laserCount += 1;
-				
 			}
 		}
 	}
@@ -423,10 +541,10 @@ function Game(new_canvas) {
 			player.x = player.x + 15;
 		}
 
-		if (playerShoot && !laser.alive) {
-			laser.x = player.x + (laser.width / 2);
+		if (playerShoot && !laser.alive && player.alive) {
+			laser.x = player.x + (player.width / 2);
 			laser.y = player.y;
-			laser.vector = -10;
+			laser.vector = playerLaserVector;
 			laser.alive = true;
 		}
 	}
@@ -509,6 +627,12 @@ function Game(new_canvas) {
 		laserCount = 0;
 	}
 
+	/*** Respawn player if they have remaining lives. */
+	function respawn() {
+		player.alive = false;
+		currentState = STATE_RESPAWN;
+	}
+
 
 
 
@@ -544,6 +668,7 @@ function Game(new_canvas) {
 	this.draw = function() {
 		wipeCanvas();
 		if (currentState == STATE_GAME) {
+			drawBackground();
 			drawGameScreen();
     	} else if (currentState == STATE_DEFEAT) {
     		drawDefeatScreen();
@@ -551,8 +676,44 @@ function Game(new_canvas) {
     		drawWinScreen();
     	} else if (currentState == STATE_START) {
     		drawStartScreen();
+    	} else if (currentState == STATE_RESPAWN) {
+    		drawBackground();
+    		drawGameScreen();
+    		drawRespawnScreen();
+    		
     	}
 	}
+
+
+	/*** Draw countdown for respawn.*/
+	function drawRespawnScreen() {
+		frameCount += 1;
+		if (frameCount < (30 * 2)/3) {
+			player.drawExplosion(context);
+		    context.font = "bold 50px sans-serif";
+			context.font = "bold 50px sans-serif";context.fillText("3", canvas.width / 2.5, canvas.height / 2);
+
+		}
+		
+		else if (frameCount >= (30 * 2)/3 && frameCount < (30 * 4)/3 ) {
+			context.font = "bold 50px sans-serif";
+			context.font = "bold 50px sans-serif";context.fillText("2", canvas.width / 2.5, canvas.height / 2);
+			}
+
+		else if (frameCount >= (30 * 4)/3 && frameCount <= (30 * 6)/3 ) {
+			context.font = "bold 50px sans-serif";
+			context.font = "bold 50px sans-serif";context.fillText("1", canvas.width / 2.5, canvas.height / 2);
+			}
+
+		else {
+		    context.font = "bold 50px sans-serif";
+			context.font = "bold 50px sans-serif";context.fillText("GO!", canvas.width / 2.5, canvas.height / 2);
+		}
+
+		
+	}		
+
+
 
 	/*** Draw a black screen, seen at game start.*/
 	function drawStartScreen() {
@@ -571,8 +732,19 @@ function Game(new_canvas) {
 		context.fillStyle = "rgb(0,0,0)";
 		context.fillRect (0, 0, canvas.width, canvas.height);
 		context.fillStyle = "rgb(255, 255, 255)";
-		context.font = "bold 20px sans-serif";
-		context.fillText(score, canvas.width / 2, canvas.height / 2);
+
+		
+		context.font = "bold 30px sans-serif";
+		context.fillText("Loser!", canvas.width / 2.5, canvas.height / 8);
+		context.font = "bold 35px sans-serif";
+		context.fillText("Final Level", canvas.width / 3.2, canvas.height / 3);
+		context.fillText(level, canvas.width /1.5, canvas.height / 3);
+		context.fillText("Final Score", canvas.width / 3.2, canvas.height / 2);
+		context.fillText(score, canvas.width /1.5, canvas.height / 2);
+		context.font = "bold 12px sans-serif";
+
+
+
 		context.font = "bold 12px sans-serif";
 		context.fillText("Press Space to play again.", 
 			canvas.width / 5, canvas.height / 2 + canvas.height / 4);
@@ -584,15 +756,31 @@ function Game(new_canvas) {
 		context.fillRect (0, 0, canvas.width, canvas.height);
 		context.fillStyle = "rgb(255, 255, 255)";
 		context.font = "bold 30px sans-serif";
-		context.fillText("Winner!", canvas.width / 3, canvas.height / 2);
+		context.fillText("Winner!", canvas.width / 2.5, canvas.height / 8);
+		context.font = "bold 50px sans-serif";
+		context.fillText("Level", canvas.width / 3, canvas.height / 2);
+		context.fillText(level, canvas.width /1.7, canvas.height / 2);
 		context.font = "bold 12px sans-serif";
 		context.fillText("Press Space to continue.", 
 			canvas.width / 5, canvas.height / 2 + canvas.height / 4);
 	}
 
+	/*** Rolling background*/
+	function drawBackground() {
+		bgYAxis += difficulty * 3;
+	    context.drawImage(img.bg, 0, bgYAxis);
+	    // Draw 2 other images at the top of the first image
+	    context.drawImage(img.bg, 0, bgYAxis - 600);
+		context.drawImage(img.bg, 0, bgYAxis -600-600);
+	
+	    // Reset y axis if its off limits
+	    if (bgYAxis >= 600)
+	      bgYAxis = 0;
+	}
+
 	/*** The main game screen*/
 	function drawGameScreen() {
-		context.drawImage(img.bg, 0, 20, 600, 580);
+		// context.drawImage(img.bg, 0, 20, 600, 580);
 		for (var i = 0; i < NUM_ROWS; i++) {
 			for (var j = 0; j < NUM_COLS; j++) {
 				invaders[i][j].draw(context);
@@ -612,6 +800,15 @@ function Game(new_canvas) {
 		context.fillText("Score: ", 10,15);
 		context.fillText(score, 70,15);
 
+		//Draw the level
+		context.fillText("Level: ", 600 - 80, 15);
+		context.fillText(level, 600 - 25, 15);
+
+		//Draw the remaining lives
+		context.fillText("Lives: ", 600 - 360, 15);
+		context.fillText(currentLives, 600 - 300, 15);
+
+
 	}
 
 	/*** Clear the canvas. */
@@ -623,6 +820,18 @@ function Game(new_canvas) {
         context.clearRect(0, 0, canvas.width, canvas.height);
         // Restore the transform
         context.restore();
+	}
+
+    /*** For testing, pls remove when done */
+	window.addEventListener('keydown', a, false);
+
+	/* When the player presses a key, that message is sent to the game logic. */
+	function a(e) {
+	    var code = e.keyCode;
+	    switch (code) {
+	        case 90: currentState = STATE_WIN; break;
+	        default: break; 
+	    }
 	}
 }
 
