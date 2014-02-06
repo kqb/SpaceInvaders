@@ -129,7 +129,7 @@ function Invader3(new_x, new_y, new_value) {
 	}
 	this.drawExplosion = function (canvas) {
 		if (!this.alive) {
-			canvas.drawImage(img.laser1, this.x+10, this.y, this.width, this.height);
+			canvas.drawImage(img.explosion, this.x, this.y, this.width, this.height);
 		}
 	}
 }
@@ -166,7 +166,7 @@ function Invader2(new_x, new_y, new_value) {
 	}
 	this.drawExplosion = function (canvas) {
 		if (!this.alive) {
-			canvas.drawImage(img.laser1, this.x+10, this.y, this.width, this.height);
+			canvas.drawImage(img.explosion, this.x, this.y, this.width, this.height);
 		}
 	}
 }
@@ -204,7 +204,7 @@ function Invader1(new_x, new_y, new_value) {
 	}
 	this.drawExplosion = function (canvas) {
 		if (!this.alive) {
-			canvas.drawImage(img.laser1, this.x+10, this.y, this.width, this.height);
+			canvas.drawImage(img.explosion, this.x, this.y, this.width, this.height);
 		}
 	}
 }
@@ -389,7 +389,7 @@ function Game(new_canvas) {
 			// Main invader loop.
 			for (var i = 0; i < NUM_ROWS; i++) {
 				for (var j = 0; j < NUM_COLS; j++) {
-					// Check collision for invaders vs player laser.
+					// Check collision for player vs invader laser.
 					var target = invaderLasers[j];
 					if (invaderLasers[j].alive &&
 					player.touches(target) && player.alive) {
@@ -405,12 +405,13 @@ function Game(new_canvas) {
 						}
 					}
 
-					// Check collision for invader vs plasyer laser.
+					// Check collision for invader vs player laser.
 					if (invaders[i][j].alive &&
 					laser.alive &&
 					invaders[i][j].touches(laser)) {
 						laser.alive = false;
 						invaders[i][j].alive = false;
+						invaders[i][j].drawExplosion(context);
 						updateInvaderWallLimits();
 						score += invaders[i][j].value;
 						invadersAlive--;
