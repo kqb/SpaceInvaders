@@ -4,28 +4,18 @@ Alexander Sirotkin (g2sirotk; 996328852)
 Katie Lo (g3lanaya; 998493848)
 */
 
-/*
-
-TO-DO LIST:
-[x] Update graphics.
-[x] Add a "current level" display.\
-[x] As the invaders die increase, the speed of the lasers and other
-    checks should increase. 
-[x] Only the bottom aliens should shoot. 
-[x] Player lives
-
-ALL DONE MADAFAKA :D
-
-*/
-
-/*** Global Variables */
+/****************************
+		Global Variables
+****************************/
+/* These probably should be moved into Game, but
+we can't be bothered to. */
 
 var timer = 0;
 var img = new loadimg();
 
-	/****************************
-			Load Assets
-	****************************/
+/****************************
+		Load Assets
+****************************/
 
 
 function loadimg() {
@@ -90,8 +80,6 @@ function invLaser(new_x, new_y, new_vector) {
 
 	this.draw = function (canvas) {
 		if (this.alive) {
-						// canvas.fillStyle = "rgb(0, 200,0)";
-		 //    canvas.fillRect (this.x, this.y, this.width, this.height);
 			canvas.drawImage(img.laser2, this.x, this.y, this.width, this.height);
 		}
 	}
@@ -230,8 +218,6 @@ function Player(new_x, new_y) {
 
 	this.draw = function (canvas) {
 		if (this.alive) {
-			// canvas.fillStyle = "rgb(0, 200,0)";
-		 //    canvas.fillRect (this.x, this.y, this.width, this.height);
 		    canvas.drawImage(img.player, this.x, this.y, this.width, this.height);
 		}
 	}
@@ -263,7 +249,6 @@ function Game(new_canvas) {
 	this.FPS = 35;
 	
 
-	
 	// Canvas and Context
 	var canvas = new_canvas;
 	var context = canvas.getContext('2d');
@@ -681,7 +666,6 @@ function Game(new_canvas) {
     		drawBackground();
     		drawGameScreen();
     		drawRespawnScreen();
-    		
     	}
 	}
 
@@ -692,29 +676,25 @@ function Game(new_canvas) {
 		if (frameCount < (30 * 2)/3) {
 			player.drawExplosion(context);
 		    context.font = "bold 50px sans-serif";
-			context.font = "bold 50px sans-serif";context.fillText("3", canvas.width / 2.5, canvas.height / 2);
-
+			context.font = "bold 50px sans-serif";
+			context.fillText("3", canvas.width / 2.5, canvas.height / 2);
 		}
-		
 		else if (frameCount >= (30 * 2)/3 && frameCount < (30 * 4)/3 ) {
 			context.font = "bold 50px sans-serif";
-			context.font = "bold 50px sans-serif";context.fillText("2", canvas.width / 2.5, canvas.height / 2);
+			context.font = "bold 50px sans-serif";
+			context.fillText("2", canvas.width / 2.5, canvas.height / 2);
 			}
-
 		else if (frameCount >= (30 * 4)/3 && frameCount <= (30 * 6)/3 ) {
 			context.font = "bold 50px sans-serif";
-			context.font = "bold 50px sans-serif";context.fillText("1", canvas.width / 2.5, canvas.height / 2);
+			context.font = "bold 50px sans-serif";
+			context.fillText("1", canvas.width / 2.5, canvas.height / 2);
 			}
-
 		else {
 		    context.font = "bold 50px sans-serif";
-			context.font = "bold 50px sans-serif";context.fillText("GO!", canvas.width / 2.5, canvas.height / 2);
+			context.font = "bold 50px sans-serif";
+			context.fillText("GO!", canvas.width / 2.5, canvas.height / 2);
 		}
-
-		
 	}		
-
-
 
 	/*** Draw a black screen, seen at game start.*/
 	function drawStartScreen() {
@@ -733,7 +713,6 @@ function Game(new_canvas) {
 		context.fillStyle = "rgb(0,0,0)";
 		context.fillRect (0, 0, canvas.width, canvas.height);
 		context.fillStyle = "rgb(255, 255, 255)";
-
 		
 		context.font = "bold 30px sans-serif";
 		context.fillText("Loser!", canvas.width / 2.5, canvas.height / 8);
@@ -742,10 +721,6 @@ function Game(new_canvas) {
 		context.fillText(level, canvas.width /1.5, canvas.height / 3);
 		context.fillText("Final Score", canvas.width / 3.2, canvas.height / 2);
 		context.fillText(score, canvas.width /1.5, canvas.height / 2);
-		context.font = "bold 12px sans-serif";
-
-
-
 		context.font = "bold 12px sans-serif";
 		context.fillText("Press Space to play again.", 
 			canvas.width / 5, canvas.height / 2 + canvas.height / 4);
