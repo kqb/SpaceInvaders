@@ -735,7 +735,7 @@ function Game(new_canvas) {
 		context.fillText("Winner!", canvas.width / 2.5, canvas.height / 8);
 		context.font = "bold 50px sans-serif";
 		context.fillText("Level", canvas.width / 3, canvas.height / 2);
-		context.fillText(level, canvas.width /1.7, canvas.height / 2);
+		context.fillText(level+1, canvas.width /1.7, canvas.height / 2);
 		context.font = "bold 12px sans-serif";
 		context.fillText("Press Space to continue.", 
 			canvas.width / 5, canvas.height / 2 + canvas.height / 4);
