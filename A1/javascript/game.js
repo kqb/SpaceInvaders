@@ -4,46 +4,6 @@ Alexander Sirotkin (g2sirotk; 996328852)
 Katie Lo (g3lanaya; 998493848)
 */
 
-/****************************
-		Global Variables
-****************************/
-/* These probably should be moved into Game, but
-we can't be bothered to. */
-
-var timer = 0;
-var img = new loadimg();
-
-/****************************
-		Load Assets
-****************************/
-
-
-function loadimg() {
-	this.bg = new Image();
-	this.player = new Image();
-	this.laser1 = new Image();
-	this.laser2 = new Image();
-	this.alien1 = new Image();
-	this.alien2 = new Image();
-	this.alien3 = new Image();
-	this.aalien1 = new Image();
-	this.aalien2 = new Image();
-	this.aalien3 = new Image();
-	this.explosion = new Image();
-	
-	this.bg.src = "img/spacebg.gif";
-	this.player.src = "img/ship.png";
-	this.laser1.src = "img/l1.png";
-	this.laser2.src = "img/l2.png";
-	this.alien1.src = "img/a1.png";
-	this.alien2.src = "img/a2.png";
-	this.alien3.src = "img/a3.png";
-	this.aalien1.src = "img/aa1.png";
-	this.aalien2.src = "img/aa2.png";
-	this.aalien3.src = "img/aa3.png";
-	this.explosion.src = "img/explosion.png"
-}
-
 
 /****************************
 
@@ -63,7 +23,8 @@ function Laser(new_x, new_y, new_vector) {
 
 	this.draw = function (canvas) {
 		if (this.alive) {
-			canvas.drawImage(img.laser1, this.x, this.y, this.width, this.height);
+			canvas.drawImage(game.getImg().laser1, 
+				this.x, this.y, this.width, this.height);
 		}
 	}
 }
@@ -80,7 +41,8 @@ function invLaser(new_x, new_y, new_vector) {
 
 	this.draw = function (canvas) {
 		if (this.alive) {
-			canvas.drawImage(img.laser2, this.x, this.y, this.width, this.height);
+			canvas.drawImage(game.getImg().laser2,
+			 this.x, this.y, this.width, this.height);
 		}
 	}
 }
@@ -106,18 +68,18 @@ function Invader3(new_x, new_y, new_value) {
 
 	this.draw = function (canvas) {
 		if (this.alive) {
-			// canvas.fillStyle = "rgb(0, 200,0)";
-		 //    canvas.fillRect (this.x, this.y, this.width, this.height);
-		 	if (timer % 35 > 17){
-		    canvas.drawImage(img.alien3, this.x, this.y, this.width, this.height);
+		 	if (game.getTimer() % 35 > 17){
+		    	canvas.drawImage(game.getImg().alien3, this.x, this.y, this.width, this.height);
 			} else {
-				canvas.drawImage(img.aalien3, this.x, this.y, this.width, this.height);
+				canvas.drawImage(game.getImg().aalien3, 
+					this.x, this.y, this.width, this.height);
 			}
 		}
 	}
 	this.drawExplosion = function (canvas) {
 		if (!this.alive) {
-			canvas.drawImage(img.explosion, this.x, this.y, this.width, this.height);
+			canvas.drawImage(game.getImg().explosion, 
+				this.x, this.y, this.width, this.height);
 		}
 	}
 }
@@ -145,16 +107,18 @@ function Invader2(new_x, new_y, new_value) {
 		if (this.alive) {
 			// canvas.fillStyle = "rgb(0, 200,0)";
 		 //    canvas.fillRect (this.x, this.y, this.width, this.height);
-		 	if (timer % 35 > 17){
-		    canvas.drawImage(img.alien2, this.x, this.y, this.width, this.height);
+		 	if (game.getTimer() % 35 > 17){
+		    	canvas.drawImage(game.getImg().alien2, 
+		    		this.x, this.y, this.width, this.height);
 			} else {
-				canvas.drawImage(img.aalien2, this.x, this.y, this.width, this.height);
+				canvas.drawImage(game.getImg().
+					aalien2, this.x, this.y, this.width, this.height);
 			}
 		}
 	}
 	this.drawExplosion = function (canvas) {
 		if (!this.alive) {
-			canvas.drawImage(img.explosion, this.x, this.y, this.width, this.height);
+			canvas.drawImage(game.img.explosion, this.x, this.y, this.width, this.height);
 		}
 	}
 }
@@ -183,16 +147,19 @@ function Invader1(new_x, new_y, new_value) {
 		if (this.alive) {
 			// canvas.fillStyle = "rgb(0, 200,0)";
 		 //    canvas.fillRect (this.x, this.y, this.width, this.height);
-		 	if (timer % 35 > 17){
-		    canvas.drawImage(img.alien1, this.x, this.y, this.width, this.height);
+		 	if (game.getTimer() % 35 > 17){
+		    	canvas.drawImage(game.getImg().alien1, 
+		    		this.x, this.y, this.width, this.height);
 			} else {
-				canvas.drawImage(img.aalien1, this.x, this.y, this.width, this.height);
+				canvas.drawImage(game.getImg().aalien1, 
+					this.x, this.y, this.width, this.height);
 			}
 		}
 	}
 	this.drawExplosion = function (canvas) {
 		if (!this.alive) {
-			canvas.drawImage(img.explosion, this.x, this.y, this.width, this.height);
+			canvas.drawImage(game.getImg().explosion, 
+				this.x, this.y, this.width, this.height);
 		}
 	}
 }
@@ -218,17 +185,17 @@ function Player(new_x, new_y) {
 
 	this.draw = function (canvas) {
 		if (this.alive) {
-		    canvas.drawImage(img.player, this.x, this.y, this.width, this.height);
+		    canvas.drawImage(game.getImg().player, 
+		    	this.x, this.y, this.width, this.height);
 		}
 	}
 
 	this.drawExplosion = function (canvas) {
 		if (!this.alive) {
-			canvas.drawImage(img.explosion, this.x, this.y, this.width, this.height);
+			canvas.drawImage(game.getImg().explosion, 
+				this.x, this.y, this.width, this.height);
 		}
 	}
-
-
 }
 
 
@@ -247,6 +214,8 @@ function Game(new_canvas) {
 	var BOTTOM = 600;
 	var LIVES = 3
 	this.FPS = 35;
+	var timer = 0;
+	var img = new loadAssets();
 	
 
 	// Canvas and Context
@@ -364,6 +333,33 @@ function Game(new_canvas) {
 		}
 	}
 
+	/*** Creates a single object that contains links to all art in the game */
+	function loadAssets() {
+		this.bg = new Image();
+		this.player = new Image();
+		this.laser1 = new Image();
+		this.laser2 = new Image();
+		this.alien1 = new Image();
+		this.alien2 = new Image();
+		this.alien3 = new Image();
+		this.aalien1 = new Image();
+		this.aalien2 = new Image();
+		this.aalien3 = new Image();
+		this.explosion = new Image();
+		
+		this.bg.src = "img/spacebg.gif";
+		this.player.src = "img/ship.png";
+		this.laser1.src = "img/l1.png";
+		this.laser2.src = "img/l2.png";
+		this.alien1.src = "img/a1.png";
+		this.alien2.src = "img/a2.png";
+		this.alien3.src = "img/a3.png";
+		this.aalien1.src = "img/aa1.png";
+		this.aalien2.src = "img/aa2.png";
+		this.aalien3.src = "img/aa3.png";
+		this.explosion.src = "img/explosion.png"
+	}
+
 	/****************************
 			Game Logic
 	****************************/
@@ -406,7 +402,7 @@ function Game(new_canvas) {
 						((invader_vector) * speedCalc());
 				}
 			}
-			timer += 1; // Update timer.
+			timer += 1; // Update game.timer.
 			checkInvaderWallLimit();
 			updateInvaderWallLimits();
 			invadersShoot();
@@ -756,7 +752,7 @@ function Game(new_canvas) {
 
 	/*** The main game screen*/
 	function drawGameScreen() {
-		// context.drawImage(img.bg, 0, 20, 600, 580);
+		// context.drawImage(game.img.bg, 0, 20, 600, 580);
 		for (var i = 0; i < NUM_ROWS; i++) {
 			for (var j = 0; j < NUM_COLS; j++) {
 				invaders[i][j].draw(context);
@@ -798,16 +794,14 @@ function Game(new_canvas) {
         context.restore();
 	}
 
-    /*** For testing, pls remove when done */
-	window.addEventListener('keydown', a, false);
+	/*** Allows entities outside the game object to access images. */
+	this.getImg = function() {
+		return img; 
+	}
 
-	/* When the player presses a key, that message is sent to the game logic. */
-	function a(e) {
-	    var code = e.keyCode;
-	    switch (code) {
-	        case 90: currentState = STATE_WIN; break;
-	        default: break; 
-	    }
+	/*** Allows entities outside the game object to get animation timing info.*/
+	this.getTimer = function() {
+		return timer;
 	}
 }
 
