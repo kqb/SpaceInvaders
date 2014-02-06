@@ -238,7 +238,7 @@ function Player(new_x, new_y) {
 
 	this.drawExplosion = function (canvas) {
 		if (!this.alive) {
-			canvas.drawImage(img.explosion, this.x+10, this.y, this.width, this.height);
+			canvas.drawImage(img.explosion, this.x, this.y, this.width, this.height);
 		}
 	}
 
