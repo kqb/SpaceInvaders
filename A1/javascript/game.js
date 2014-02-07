@@ -795,6 +795,14 @@ function Game(new_canvas) {
         context.restore();
 	}
 
+	/****************************
+
+		Internal Data Getters
+
+	****************************/
+	/* Ideally, this would not be necessary, but refactoring the code to fix that
+	situation is not worth the effort given that the game works. */
+
 	/*** Allows entities outside the game object to access images. */
 	this.getImg = function() {
 		return img; 
