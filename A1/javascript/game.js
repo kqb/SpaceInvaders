@@ -118,7 +118,8 @@ function Invader2(new_x, new_y, new_value) {
 	}
 	this.drawExplosion = function (canvas) {
 		if (!this.alive) {
-			canvas.drawImage(game.img.explosion, this.x, this.y, this.width, this.height);
+			canvas.drawImage(game.getImg().explosion, 
+				this.x, this.y, this.width, this.height);
 		}
 	}
 }
