@@ -19,6 +19,8 @@ All objects that are drawable on screen and can be interacted with by the player
 
 Enemies in the game are replicated according to the original space invaders game, enemies have 3 tiers and each one has 2 images to alternate between. The enemies in the bottom row are are randomly selected to fire projectiles at the player, the chance and speed of their projectiles increases as the level progresses, increasing the difficulty. The enemies of the bottom row are periodically updated and with their indices stored in a list. 
 
+The primary data structure we used was arrays to keep track of the invaders, fired lasers by invaders and any object we would have multiple instances of. This is in addition to the regular variable and objects in javascript.
+
 The code is well-documented, but summaries of each section of code is below:
 
 
